@@ -1,0 +1,5 @@
+{
+  "yaml.schemas": {
+    "kubernetes://schema/v1%40service": "file:///Users/apple/Downloads/Desktop2/ticketing/k8s/auth-depl.yaml"
+  }
+}
