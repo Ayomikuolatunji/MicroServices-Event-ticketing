@@ -1,6 +1,7 @@
 import express from "express";
 import "express-async-errors";
 import { json } from "body-parser";
+import mongoose from "mongoose";
 import { currentUserRouter } from "./routes/current-user";
 import { signOutRouter } from "./routes/signout";
 import { signInRouter } from "./routes/signIn";
@@ -25,6 +26,15 @@ app.use(errorHandler);
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
+const start = async () => {
+  await mongoose
+    .connect(`mongodb://auth-mongo-srv:27017/auth`,{
+      
+    })
+    .then(() => console.log("Database connected"));
+};
+
+app.listen(PORT, async () => {
+  await start();
   console.log("Auth service server is running on port 3000");
 });
