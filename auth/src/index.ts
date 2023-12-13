@@ -1,6 +1,7 @@
 import express from "express";
 import "express-async-errors";
 import { json } from "body-parser";
+import { ServerApiVersion } from "mongodb";
 import mongoose from "mongoose";
 import { currentUserRouter } from "./routes/current-user";
 import { signOutRouter } from "./routes/signout";
@@ -28,13 +29,23 @@ const PORT = 3000;
 
 const start = async () => {
   await mongoose
-    .connect(`mongodb://auth-mongo-srv:27017/auth`,{
-      
+    .connect(`mongodb://auth-mongo-srv:27017/auth`, <{}>{
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverApi: ServerApiVersion.v1,
     })
-    .then(() => console.log("Database connected"));
+    .then(() => {
+      console.log("Database connected!!");
+      app.listen(PORT, async () => {
+        try {
+          console.log("Auth service server is running on port 3000");
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    }).catch((err)=>{
+      console.log("Err:", err);
+    });
 };
 
-app.listen(PORT, async () => {
-  await start();
-  console.log("Auth service server is running on port 3000");
-});
+start();
