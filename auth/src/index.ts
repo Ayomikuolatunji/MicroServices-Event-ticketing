@@ -30,8 +30,6 @@ const PORT = 3000;
 const start = async () => {
   await mongoose
     .connect(`mongodb://auth-mongo-srv:27017/auth`, <{}>{
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverApi: ServerApiVersion.v1,
     })
     .then(() => {
