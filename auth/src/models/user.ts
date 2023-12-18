@@ -1,16 +1,6 @@
 import mongoose from "mongoose";
+import { IUser, UserDoc, UserModel } from "./types.model";
 
-interface IUser {
-  email: string;
-  password: string;
-}
-interface UserDoc extends mongoose.Document {
-  email: string;
-  password: string;
-}
-interface UserModel extends mongoose.Model<UserDoc> {
-  build(attrs: IUser): UserDoc;
-}
 const userSchema = new mongoose.Schema<UserDoc>(
   {
     email: {
@@ -29,6 +19,11 @@ userSchema.statics.build = async function (attrs: IUser) {
   const user = new User(attrs);
   return user.save();
 };
+
+userSchema.pre("save", async function (done) {
+  
+  done();
+});
 
 const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
 export { User };

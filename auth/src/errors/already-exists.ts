@@ -2,7 +2,7 @@ import { CustomError } from "./custom-error";
 
 export class AlreadyExist extends CustomError {
   statusCode: number;
-  constructor(message: string) {
+  constructor(public message: string) {
     super(message);
     this.statusCode = 403;
     this.message = message;
