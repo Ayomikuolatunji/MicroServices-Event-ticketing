@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import { RequestValidationError } from "../errors/request-validation";
 import { User } from "../models/user";
+import { AlreadyExist } from "../errors/already-exists";
 
 const router = express.Router();
 
@@ -24,9 +25,10 @@ router.post(
       }
       const existingUser = await User.findOne({ email: email });
       if (existingUser) {
-        throw new Error("User already exists");
+        throw new AlreadyExist("User already exists");
       }
-      return res.status(201).json({});
+      const user = await User.build({ email, password });
+      return res.status(201).send(user);
     } catch (error) {
       next(error);
     }

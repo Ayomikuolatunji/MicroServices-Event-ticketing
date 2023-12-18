@@ -24,5 +24,11 @@ const userSchema = new mongoose.Schema<UserDoc>(
   },
   { timestamps: true }
 );
+
+userSchema.statics.build = async function (attrs: IUser) {
+  const user = new User(attrs);
+  return user.save();
+};
+
 const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
 export { User };
