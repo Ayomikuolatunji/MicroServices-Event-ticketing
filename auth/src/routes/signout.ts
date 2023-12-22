@@ -4,7 +4,7 @@ import { currentUser } from "../middlewares/current-user";
 
 const router = express.Router();
 
-router.post("/api/users/signout", currentUser, requiredAuth, async (req, res, next) => {
+router.post("/api/users/sign-out", currentUser, requiredAuth, async (req, res, next) => {
   try {
     req.session = null;
     res.send({ currentUser: null });

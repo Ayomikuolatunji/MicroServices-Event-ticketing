@@ -10,14 +10,10 @@ import { validateRequest } from "../middlewares/validate-request";
 const router = express.Router();
 
 router.post(
-  "/api/users/signin",
+  "/api/users/sign-in",
   [
     body("email").isEmail().withMessage("Email must be valid and must  not be empty").notEmpty(),
-    body("password")
-      .trim()
-      .isLength({ min: 4, max: 20 })
-      .notEmpty()
-      .withMessage("Password is required"),
+    body("password").trim().notEmpty().withMessage("Password is required"),
   ],
   validateRequest,
   async (req: Request, res: Response, next: NextFunction) => {
@@ -36,14 +32,11 @@ router.post(
           id: user.id,
           email: user.email,
         },
-        process.env.JWT_SECRET!
+        process.env.JWT_KEY!
       );
-      req.session = {
-        jwt: token,
-      };
-
-      res.status(200).json(user);
-    } catch (error) {
+     return res.status(200).json(user);
+    } catch (error:any) {
+      console.log(error.message);
       next(error);
     }
   }
