@@ -9,5 +9,5 @@ export interface UserDoc extends mongoose.Document {
   password: string;
 }
 export interface UserModel extends mongoose.Model<UserDoc> {
-  build(attrs: IUser): UserDoc;
+  build(attrs: IUser): Promise<UserDoc>;
 }

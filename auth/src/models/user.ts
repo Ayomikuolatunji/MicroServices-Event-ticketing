@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { IUser, UserDoc, UserModel } from "./types.model";
+import { Password } from "../services/password";
 
 const userSchema = new mongoose.Schema<UserDoc>(
   {
@@ -21,7 +22,10 @@ userSchema.statics.build = async function (attrs: IUser) {
 };
 
 userSchema.pre("save", async function (done) {
-  
+  if (this.isModified("password")) {
+    const hashedPassword = await Password.hashPassword(this.get("password"));
+    this.set("password", hashedPassword);
+  }
   done();
 });
 
