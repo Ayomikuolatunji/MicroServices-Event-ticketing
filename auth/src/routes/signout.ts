@@ -1,11 +1,13 @@
 import express from "express";
+import { requiredAuth } from "../middlewares/required-auth";
+import { currentUser } from "../middlewares/current-user";
 
 const router = express.Router();
 
-
-router.post("/api/users/signout", async (req, res, next) => {
+router.post("/api/users/signout", currentUser, requiredAuth, async (req, res, next) => {
   try {
-    res.status(200).json("Hi there!");
+    req.session = null;
+    res.send({ currentUser: null });
   } catch (error) {
     next(error);
   }

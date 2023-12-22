@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 import jwt from "jsonwebtoken";
-import { RequestValidationError } from "../errors/request-validation";
 import { User } from "../models/user";
 import { AlreadyExist } from "../errors/already-exists";
+import { validateRequest } from "../middlewares/validate-request";
 
 const router = express.Router();
 
@@ -17,25 +17,22 @@ router.post(
       .notEmpty()
       .withMessage("Password is required"),
   ],
+  validateRequest,
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        throw new RequestValidationError(errors.array());
-      }
-      await User.deleteMany()
+      await User.deleteMany();
       const existingUser = await User.findOne({ email: email });
       if (existingUser) {
         throw new AlreadyExist("User already exists");
       }
       const user = await User.build({ email, password });
-      const userJwt= jwt.sign(
+      const userJwt = jwt.sign(
         {
-          id: user._id,
+          id: user.id,
           email: user.email,
         },
-        "asdf"
+        process.env.JWT_KEY!
       );
       req.session = {
         jwt: userJwt,

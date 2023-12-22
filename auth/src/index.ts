@@ -1,42 +1,19 @@
-import express from "express";
-import "express-async-errors";
-import { json } from "body-parser";
-import cookieSession from "cookie-session";
+import { app } from "./app";
+import { DatabaseConnectError } from "./errors/database-connection-error";
+import { InternalServerError } from "./errors/internal-server-error";
 import { ServerApiVersion } from "mongodb";
 import mongoose from "mongoose";
-import { currentUserRouter } from "./routes/current-user";
-import { signOutRouter } from "./routes/signout";
-import { signInRouter } from "./routes/signIn";
-import { signupRouter } from "./routes/signup";
-import { errorHandler } from "./middlewares/error-handler.middleware";
-import { NotFoundError } from "./errors/not-found-error";
-
-const app = express();
-app.set("trust proxy", true);
-app.use(json());
-app.use(
-  cookieSession({
-    signed: false,
-    secure: true,
-  })
-);
-
-app.use(currentUserRouter);
-app.use(signOutRouter);
-app.use(signInRouter);
-app.use(signupRouter);
-
-app.all("*", async (req, res, next) => {
-  throw new NotFoundError("Route not found");
-});
-
-app.use(errorHandler);
 
 const PORT = 3000;
 
 const start = async () => {
+  if (!process.env.MONGO_URL) {
+    throw new DatabaseConnectError("MONGO_URL Not provided");
+  } else if (!process.env.JWT_KEY) {
+    throw new InternalServerError("Internal server error caused my JWT_KEY not been provided");
+  }
   await mongoose
-    .connect(`mongodb://auth-mongo-srv:27017/auth`, <{}>{
+    .connect(process.env.MONGO_URL, <{}>{
       serverApi: ServerApiVersion.v1,
     })
     .then(() => {
