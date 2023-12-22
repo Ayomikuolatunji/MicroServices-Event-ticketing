@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { body, validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
 import { RequestValidationError } from "../errors/request-validation";
 import { User } from "../models/user";
 import { AlreadyExist } from "../errors/already-exists";
@@ -23,11 +24,22 @@ router.post(
       if (!errors.isEmpty()) {
         throw new RequestValidationError(errors.array());
       }
+      await User.deleteMany()
       const existingUser = await User.findOne({ email: email });
       if (existingUser) {
         throw new AlreadyExist("User already exists");
       }
       const user = await User.build({ email, password });
+      const userJwt= jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+        },
+        "asdf"
+      );
+      req.session = {
+        jwt: userJwt,
+      };
       return res.status(201).send(user);
     } catch (error) {
       next(error);
