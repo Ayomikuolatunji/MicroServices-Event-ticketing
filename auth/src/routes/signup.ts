@@ -21,6 +21,7 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
+      await User.deleteMany();
       const existingUser = await User.findOne({ email: email });
       if (existingUser) {
         throw new AlreadyExist("User already exists");
