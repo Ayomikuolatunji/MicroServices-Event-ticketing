@@ -22,4 +22,5 @@ build:
         dockerfile: Dockerfile
       sync:
         infer:
-          - "**/*.ts"
+          - "src/**/*.tsx"
+
